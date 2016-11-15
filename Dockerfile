@@ -1,11 +1,10 @@
-FROM debian:stretch
+FROM python:3-slim
 
 # runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
         iptables \
         openssl \
         procps \
-        python3 \
         runit \
         socat \
     && rm -rf /var/lib/apt/lists/*
@@ -20,21 +19,14 @@ RUN set -x \
         libffi-dev \
         libpcre3-dev \
         libreadline-dev \
-        libssl-dev \
         make \
-        python3-dev \
-        python3-pip \
-        python3-setuptools \
+        perl \
         wget \
     ' \
     && apt-get update \
         && apt-get install -y --no-install-recommends $buildDeps \
         && rm -rf /var/lib/apt/lists/* \
-# Install Python packages with --upgrade so we get new packages even if a system
-# package is already installed. Combine with --force-reinstall to ensure we get
-# a local package even if the system package is up-to-date as the system package
-# will probably be uninstalled with the build dependencies.
-    && pip3 install --no-cache --upgrade --force-reinstall -r /marathon-lb/requirements.txt \
+    && pip install --no-cache -r /marathon-lb/requirements.txt \
     && /marathon-lb/build-haproxy.sh \
     && apt-get purge -y --auto-remove $buildDeps
 

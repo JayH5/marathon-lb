@@ -3,6 +3,24 @@ set -e
 
 mkdir -p /usr/src
 
+# Build openssl
+OPENSSL_VERSION="1.0.2j"
+OPENSSL_SHA256="e7aff292be21c259c6af26469c7a9b3ba26e9abaaffd325e3dccc9785256c431"
+
+cd /usr/src
+OPENSSL_FILENAME="openssl-$OPENSSL_VERSION"
+wget "https://www.openssl.org/source/$OPENSSL_FILENAME.tar.gz"
+echo "$OPENSSL_SHA256  $OPENSSL_FILENAME.tar.gz" | sha256sum -c
+tar zxf "$OPENSSL_FILENAME.tar.gz"
+cd "$OPENSSL_FILENAME"
+perl ./Configure linux-x86_64 \
+    enable-ec_nistp_64_gcc_128 \
+    shared
+make depend
+make
+make test
+make install_sw
+
 # Build Lua
 LUA_VERSION="5.3.3"
 LUA_SHA1="a0341bc3d1415b814cc738b2ec01ae56045d64ef"
@@ -32,17 +50,17 @@ make -j4 \
   CPU=x86_64 \
   USE_PCRE=1 \
   USE_PCRE_JIT=1 \
-  USE_LIBCRYPT=1 \
-  USE_LINUX_SPLICE=1 \
-  USE_LINUX_TPROXY=1 \
+  USE_REGPARM=1 \
+  USE_STATIC_PCRE=1 \
   USE_OPENSSL=1 \
-  USE_DL=1 \
+  SSL_LIB=/usr/local/ssl/lib/ \
+  SSL_INC=/usr/local/ssl/include/ \
   USE_LUA=1 \
   LUA_LIB=/usr/local/lib/ \
   LUA_INC=/usr/local/include/ \
   USE_ZLIB=1 \
-  LDFLAGS="-lcrypt  -lssl -lcrypto -L/usr/local/lib/ -llua -lm -L/usr/lib -lpcreposix -lpcre"
-make -j4 install-bin LDFLAGS="-lcrypt  -lssl -lcrypto -L/usr/local/lib/ -llua -lm -L/usr/lib -lpcreposix -lpcre -ldl"
+  ADDLIB="-L/usr/local/lib/ -L/usr/lib"
+make -j4 install-bin
 
 # Clean up
 cd /
