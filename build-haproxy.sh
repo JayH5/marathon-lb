@@ -14,8 +14,9 @@ echo "$OPENSSL_SHA256  $OPENSSL_FILENAME.tar.gz" | sha256sum -c
 tar zxf "$OPENSSL_FILENAME.tar.gz"
 cd "$OPENSSL_FILENAME"
 perl ./Configure linux-x86_64 \
-    enable-ec_nistp_64_gcc_128 \
-    shared
+  enable-ec_nistp_64_gcc_128 \
+  shared \
+  -Wl,-rpath=/usr/local/ssl/lib
 make depend
 make
 make test
@@ -58,8 +59,7 @@ make -j4 \
   USE_LUA=1 \
   LUA_LIB=/usr/local/lib/ \
   LUA_INC=/usr/local/include/ \
-  USE_ZLIB=1 \
-  ADDLIB="-L/usr/local/lib/ -L/usr/lib"
+  USE_ZLIB=1
 make -j4 install-bin
 
 # Clean up
