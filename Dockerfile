@@ -19,6 +19,7 @@ RUN set -x \
         libffi-dev \
         libpcre3-dev \
         libreadline-dev \
+        libssl-dev \
         make \
         perl \
         wget \
