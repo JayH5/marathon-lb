@@ -4,8 +4,8 @@ set -e
 mkdir -p /usr/src
 
 # Build openssl
-OPENSSL_VERSION="1.0.2j"
-OPENSSL_SHA256="e7aff292be21c259c6af26469c7a9b3ba26e9abaaffd325e3dccc9785256c431"
+OPENSSL_VERSION="1.1.0c"
+OPENSSL_SHA256="fc436441a2e05752d31b4e46115eb89709a28aef96d4fe786abe92409b2fd6f5"
 
 cd /usr/src
 OPENSSL_FILENAME="openssl-$OPENSSL_VERSION"
@@ -19,7 +19,7 @@ perl ./Configure linux-x86_64 \
   -Wl,-rpath=/usr/local/ssl/lib
 make depend
 make
-make test
+# make test
 make install_sw
 
 # Build Lua
@@ -36,13 +36,13 @@ make -j4 linux LUA_LIB_NAME=lua53
 make -j4 install LUA_LIB_NAME=lua53
 
 # Build HAProxy
-HAPROXY_MAJOR_VERSION="1.6"
-HAPROXY_VERSION="1.6.9"
-HAPROXY_MD5="c52eee40eb66f290d6f089c339b9d2b3"
+HAPROXY_MAJOR_VERSION="1.7"
+HAPROXY_VERSION="1.7-dev6"
+HAPROXY_MD5="e9f338c8b5731ba0827e5f280e8bafb2"
 
 cd /usr/src
 HAPROXY_FILENAME="haproxy-$HAPROXY_VERSION"
-wget "http://www.haproxy.org/download/$HAPROXY_MAJOR_VERSION/src/$HAPROXY_FILENAME.tar.gz"
+wget "http://www.haproxy.org/download/$HAPROXY_MAJOR_VERSION/src/devel/$HAPROXY_FILENAME.tar.gz"
 echo "$HAPROXY_MD5  $HAPROXY_FILENAME.tar.gz" | md5sum -c
 tar zxf "$HAPROXY_FILENAME.tar.gz"
 cd "$HAPROXY_FILENAME"
@@ -59,8 +59,9 @@ make -j4 \
   USE_LUA=1 \
   LUA_LIB=/usr/local/lib/ \
   LUA_INC=/usr/local/include/ \
-  USE_ZLIB=1
-make -j4 install-bin
+  USE_ZLIB=1 \
+  all \
+  install-bin
 
 # Clean up
 cd /
