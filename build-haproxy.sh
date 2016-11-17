@@ -59,9 +59,8 @@ make -j4 \
   USE_LUA=1 \
   LUA_LIB=/usr/local/lib/ \
   LUA_INC=/usr/local/include/ \
-  USE_ZLIB=1 \
-  all \
-  install-bin
+  USE_ZLIB=1
+make install-bin
 
 # Clean up
 cd /
