@@ -15,10 +15,11 @@ before_install:
   - pip install --upgrade pip
 install:
   - pip install -r requirements.txt -r requirements-dev.txt
-  - pip install flake8 codecov
+  - pip install codecov coverage flake8
 
 script:
-  - py.test --cov
+  - coverage run $(which nosetests)
+  - coverage xml && coverage report
   - flake8 . || true
   - if [ -n "$DOCKER_BUILD" ]; then docker build -t marathon-lb .; fi
   # Run some basic sanity checks...
