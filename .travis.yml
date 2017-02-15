@@ -20,7 +20,7 @@ install:
 script:
   - coverage run $(which nosetests)
   - coverage xml && coverage report
-  - flake8 . || true
+  - flake8 .
   - if [ -n "$DOCKER_BUILD" ]; then docker build -t marathon-lb .; fi
   # Run some basic sanity checks...
   - if [ -n "$DOCKER_BUILD" ]; then docker run --rm --entrypoint haproxy marathon-lb -vv; fi
